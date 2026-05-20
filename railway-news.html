@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTM Audit — GTM-KQ4VZD5 (v204 Draft)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand:    #1b3342;
+    --rn:       #FE9E2B;
+    --light-bg: #F7F7F7;
+    --white:    #ffffff;
+    --critical: #c0392b;
+    --critical-bg: #fdf3f2;
+    --warning:  #e67e22;
+    --warning-bg: #fef9f0;
+    --low:      #27ae60;
+    --low-bg:   #f0faf4;
+    --inactive: #7f8c8d;
+    --border:   #dde1e4;
+    --text:     #2c3e50;
+    --muted:    #6c757d;
+    --tag-active:   #e8f5e9;
+    --tag-legacy:   #fce4e4;
+    --tag-warning:  #fff3e0;
+  }
+
+  body {
+    font-family: 'Mukta', sans-serif;
+    font-size: 15px;
+    background: var(--light-bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--brand);
+    color: white;
+    padding: 28px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+  }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+  .header-meta { text-align: right; font-size: 13px; opacity: 0.75; }
+  .rn-badge {
+    display: inline-block;
+    background: var(--rn);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  /* ── Layout ── */
+  .container { max-width: 1300px; margin: 0 auto; padding: 32px 40px; }
+
+  /* ── Stat cards ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+  }
+  .stat-card .num { font-size: 36px; font-weight: 700; color: var(--brand); line-height: 1; }
+  .stat-card .label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .stat-card .sub { font-size: 12px; margin-top: 8px; font-weight: 500; }
+  .stat-card.danger .num { color: var(--critical); }
+  .stat-card.warn .num { color: var(--warning); }
+  .stat-card.ok .num { color: var(--low); }
+
+  /* ── Section ── */
+  .section { background: white; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 24px; overflow: hidden; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 22px;
+    background: var(--light-bg);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-header h2 { font-size: 15px; font-weight: 700; flex: 1; }
+  .section-header .count { font-size: 12px; color: var(--muted); }
+  .section-header .chevron { font-size: 12px; color: var(--muted); transition: transform 0.2s; }
+  .section-header.open .chevron { transform: rotate(180deg); }
+  .section-body { padding: 0; }
+  .section-body.hidden { display: none; }
+
+  /* ── Tables ── */
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th {
+    background: var(--brand);
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 9px 14px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f9fafb; }
+
+  /* ── Issue items ── */
+  .issue-list { padding: 16px 22px; }
+  .issue-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  .issue-item:last-child { margin-bottom: 0; }
+  .issue-item.critical { background: var(--critical-bg); border-left: 4px solid var(--critical); }
+  .issue-item.warning  { background: var(--warning-bg); border-left: 4px solid var(--warning); }
+  .issue-item.low      { background: var(--low-bg); border-left: 4px solid var(--low); }
+  .issue-num {
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .critical .issue-num { background: var(--critical); color: white; }
+  .warning  .issue-num { background: var(--warning);  color: white; }
+  .low      .issue-num { background: var(--low);       color: white; }
+  .issue-text strong { display: block; font-weight: 600; margin-bottom: 2px; }
+
+  /* ── Reco table ── */
+  .reco-row td:first-child { width: 36px; text-align: center; font-weight: 700; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge.critical { background: #fde8e8; color: var(--critical); }
+  .badge.high     { background: #fff0e0; color: var(--warning); }
+  .badge.medium   { background: #e8f0ff; color: #2657d6; }
+  .badge.low      { background: #e8f8ee; color: var(--low); }
+  .badge.active   { background: #e8f8ee; color: var(--low); }
+  .badge.done     { background: #e8f8ee; color: var(--low); }
+  .badge.new      { background: #fff3cd; color: #856404; }
+  .badge.unused   { background: #fdf3f2; color: var(--critical); }
+  .badge.legacy   { background: #fff0e0; color: var(--warning); }
+  .badge.broken   { background: #fde8e8; color: var(--critical); }
+
+  /* ── Sub-tabs ── */
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab {
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    color: var(--muted);
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab.active { color: var(--brand); border-bottom-color: var(--rn); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── GA4 config block ── */
+  .config-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 20px 22px;
+  }
+  .config-item { font-size: 14px; }
+  .config-item .key { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); margin-bottom: 3px; }
+  .config-item .val { font-family: monospace; font-size: 14px; color: var(--brand); font-weight: 600; }
+  .config-item .val.ok   { color: var(--low); }
+  .config-item .val.bad  { color: var(--critical); }
+  .config-item .val.warn { color: var(--warning); }
+
+  /* ── Code ── */
+  code { font-family: monospace; font-size: 12.5px; background: #eef; padding: 1px 5px; border-radius: 3px; color: var(--brand); }
+
+  /* ── Scroll to top ── */
+  .back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 28px;
+    background: var(--brand);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .back-to-top.visible { opacity: 1; }
+
+  @media (max-width: 700px) {
+    .header { padding: 20px; flex-direction: column; align-items: flex-start; }
+    .container { padding: 20px; }
+    .config-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="rn-badge">Railway-News</div>
+    <h1>GTM Container Audit</h1>
+    <p>GTM-KQ4VZD5 &nbsp;·&nbsp; v203 → v204 (Draft) &nbsp;·&nbsp; railway-news.com</p>
+  </div>
+  <div class="header-meta">
+    GA4: G-44YRXC0RSM<br>
+    Audited: 20 May 2026
+  </div>
+</div>
+<style>
+  .site-nav { background: #14293a; padding: 0 40px; display: flex; flex-wrap: wrap; }
+  .site-link { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 12px; font-weight: 600; padding: 8px 14px; border-bottom: 3px solid transparent; transition: color 0.15s, border-color 0.15s; white-space: nowrap; }
+  .site-link:hover, .site-link.active { color: white; border-bottom-color: var(--link-c); }
+</style>
+<nav class="site-nav">
+  <a class="site-link active" style="--link-c:#FE9E2B" href="railway-news.html">Railway-News</a>
+  <a class="site-link" style="--link-c:#9789B4" href="bus-news.html">Bus-News</a>
+  <a class="site-link" style="--link-c:#43C7F4" href="airport-industry-news.html">Airport Industry-News</a>
+  <a class="site-link" style="--link-c:#8CC63E" href="future-transport-news.html">Future Transport-News</a>
+  <a class="site-link" style="--link-c:#49B7BE" href="maritime-industry-news.html">Maritime Industry-News</a>
+</nav>
+
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card ok">
+      <div class="num">19</div>
+      <div class="label">Tags (v204)</div>
+      <div class="sub" style="color:var(--low)">0 legacy · was 24</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="num">40</div>
+      <div class="label">Unused Triggers</div>
+      <div class="sub">of 64 total (62%) — Phase 5</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="num">24</div>
+      <div class="label">Unused Variables</div>
+      <div class="sub">of 61 total (39%) — Phase 5</div>
+    </div>
+    <div class="stat-card ok">
+      <div class="num">0</div>
+      <div class="label">Critical Issues</div>
+      <div class="sub" style="color:var(--low)">All fixed in v204 ✓</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="num">1</div>
+      <div class="label">Warnings</div>
+      <div class="sub">co-fire + unused broken trigger</div>
+    </div>
+    <div class="stat-card ok">
+      <div class="num">15</div>
+      <div class="label">GA4 Events tracked</div>
+      <div class="sub">1 property · unified banner tracking</div>
+    </div>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="section">
+    <div class="section-header open" onclick="toggle(this)">
+      <h2>Next Steps</h2>
+      <span class="count">v204 live · v205 consent fix ready to import · dev tasks pending</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="issue-list">
+
+        <div style="padding: 4px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v205 — Ready to Import</div>
+
+        <div class="issue-item low" style="border-left-color:#9789B4;background:#f6f4fb;">
+          <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">v205</div>
+          <div class="issue-text">
+            <strong>Consent re-trigger fix — <code>GTM-KQ4VZD5_v205_consent_fix.json</code> ready</strong>
+            First-session page views are currently lost: when a new visitor accepts consent, the GA4 config tag has already missed its trigger window. This JSON adds:
+            <br><br>
+            &nbsp;&nbsp;<strong>Variable 240:</strong> <code>{{DLV - analytics}}</code> — reads <code>analytics</code> key from dataLayer<br>
+            &nbsp;&nbsp;<strong>Trigger 245:</strong> <code>Consent Granted - Analytics</code> — Custom Event <code>a2b_consent_updated</code> with condition <code>{{DLV - analytics}}</code> equals <code>granted</code><br>
+            &nbsp;&nbsp;<strong>10 tags updated</strong> with Trigger 245 as additional firing trigger: Tag 237 (config), 138, 140, 150, 164, 224, 226, 231, 236, 241
+            <br><br>
+            Import with <strong>Overwrite</strong> mode. No tags deleted. No custom dimensions affected. Safe to import immediately — no dependency on dev tasks.
+            <br><br>
+            <strong>After publishing v205:</strong> apply the same consent re-trigger pattern to all other containers (Bus-News, Airport Industry-News, Future Transport-News, Maritime Industry-News).
+          </div>
+        </div>
+
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v204 — Complete ✓</div>
+
+        <div class="issue-item low" style="opacity:0.6">
+          <div class="issue-num" style="background:#27ae60;color:white;font-size:10px;min-width:28px">✓</div>
+          <div class="issue-text">
+            <strong>All GA4 custom dimensions registered · v204 imported, tested, and published · 20 May 2026</strong>
+            All banner tracking, consent, and bug fix changes are live. GTM-KQ4VZD5_v203.json retained as rollback reference.
+          </div>
+        </div>
+
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Outstanding — GTM UI (No JSON Change)</div>
+
+        <div class="issue-item warning">
+          <div class="issue-num">!</div>
+          <div class="issue-text">
+            <strong>Check all other GTM containers for Apollo.io consent gate</strong>
+            Apollo.io and similar US-based B2B visitor ID tools ship without GDPR consent controls. Fixed in GTM-KQ4VZD5. <strong>All other containers (Airport Industry-News, Bus-News, Maritime Industry-News, Future Transport-News) must be checked and updated.</strong>
+          </div>
+        </div>
+        <div class="issue-item low">
+          <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">UI</div>
+          <div class="issue-text">
+            <strong>Reorganise GTM folders — confirmed to proceed</strong>
+            Current folders ("JCS", "JCS 2025") use chronological naming. Agreed functional structure: <strong>Supplier Tracking · Homepage · Magazine · Forms · Ad Tracking · Legacy</strong>. GTM UI drag-and-drop only — no JSON or tag changes needed.
+          </div>
+        </div>
+        <div class="issue-item warning">
+          <div class="issue-num">!</div>
+          <div class="issue-text">
+            <strong>Phase 5 cleanup — bulk-delete 40 unused triggers and 24 unused variables</strong>
+            Do not do this until v204 has been confirmed stable in production for a reasonable period. The unused items do no harm in the meantime. See Triggers (Unused) and Variables (Unused) tabs below for the full lists.
+          </div>
+        </div>
+
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Dev Tasks — Required Before v205</div>
+
+        <div class="issue-item low" style="border-left-color: #e67e22; background: #fef9f0;">
+          <div class="issue-num" style="background:#e67e22;color:white;font-size:9px;min-width:28px">DEV</div>
+          <div class="issue-text">
+            <strong>Add <code>data-company-image</code> to <code>article__featured-logo</code> img elements</strong>
+            Two WordPress templates need updating: <strong>single post template</strong> and <strong>supplier profile template</strong>.
+            <br><br>
+            Change: <code>&lt;img class="article__featured-logo" alt="Rail BI" src="..."&gt;</code><br>
+            To: <code>&lt;img class="article__featured-logo" alt="Rail BI" src="..." data-company-image="Rail BI"&gt;</code>
+            <br><br>
+            <strong>Why:</strong> The featured logo on article and profile pages should register as a Company View (<code>supplier_logo_impression</code>) in GA4. GTM Trigger 139 already targets <code>[data-company-image]</code> — once this attribute is added, tracking fires automatically with no GTM changes needed. The client name must match exactly what is used on article cards for the same client.
+            <br><br>
+            <strong>GTM consequence once done:</strong> Tag 164 (<code>logo_url</code> event) and Trigger 155 become redundant and will be deleted in v205.
+          </div>
+        </div>
+
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v205 GTM Work (Planned)</div>
+
+        <div class="issue-item low">
+          <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">v205</div>
+          <div class="issue-text">
+            <strong>Supplier scroller — IntersectionObserver for rotating logo tracking</strong>
+            The featured supplier scroller on <code>/suppliers/</code> is a CSS radio-button carousel. Only the first (default) slide is currently captured — GTM's Element Visibility trigger cannot detect CSS-only display changes caused by radio button toggling (no DOM mutations occur).
+            <br><br>
+            <strong>Fix:</strong> New Custom HTML tag (filtered to <code>/suppliers/</code> only) using IntersectionObserver on <code>.scroller__logo[data-company-image]</code> elements — the same approach used for AdRotate banners in Tag 241. Fires a dataLayer event per visible slide → new CUSTOM_EVENT trigger → new GA4 tag → <code>supplier_logo_impression</code> with <code>client_logo_view</code>.
+            <br><br>
+            No dependency on the dev task above. Pure GTM change.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tracking To-Do -->
+  <div class="section">
+    <div class="section-header open" onclick="toggle(this)">
+      <h2>Tracking To-Do — v205+</h2>
+      <span class="count">P&amp;S confirmed working · 5 new interactions to add · unify to <code>client</code> param in v205 · magazine tracking gaps documented</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="tabs" id="todo-tabs">
+        <div class="tab active" onclick="switchTab('todo-tabs','todo-ps')">P&amp;S Featured Suppliers</div>
+        <div class="tab" onclick="switchTab('todo-tabs','todo-interactions')">Client Interaction Tracking</div>
+        <div class="tab" onclick="switchTab('todo-tabs','todo-reporting')">How Client Reporting Works</div>
+        <div class="tab" onclick="switchTab('todo-tabs','todo-magazine')">Magazine Tracking</div>
+      </div>
+
+      <!-- P&S Featured Suppliers -->
+      <div class="tab-panel active" id="todo-ps" style="padding:20px 22px;">
+        <div class="issue-item low" style="margin-bottom:12px;">
+          <div class="issue-num">✓</div>
+          <div class="issue-text">
+            <strong>Featured supplier cards — 3 events confirmed intentional</strong>
+            <code>.cards__link--suppliers</code> elements carry both <code>data-company-image</code> and <code>data-company-impression</code>, so each card fires three events when it enters the viewport: <strong>Tag 140</strong> (<code>supplier_logo_impression</code> — logo seen), <strong>Tag 138</strong> (<code>supplier_content_impression</code> — article snippet seen), <strong>Tag 150</strong> (<code>featured_suppliers_event</code> — counted specifically for this P&amp;S section). All three are intentional and distinct. No change needed.
+          </div>
+        </div>
+        <div class="issue-item low" style="margin-bottom:12px;">
+          <div class="issue-num">✓</div>
+          <div class="issue-text">
+            <strong>Download cards — 2 events confirmed intentional, no dev task needed</strong>
+            <code>.cards__link--download</code> elements already carry <em>both</em> <code>data-company-image</code> and <code>data-company-impression</code> in the HTML. Both <code>supplier_logo_impression</code> (Tag 140) and <code>supplier_content_impression</code> (Tag 138) already fire when a download card enters the viewport — this is correct. Download cards do NOT fire <code>featured_suppliers_event</code> (Tag 150 / Trigger 153 targets a different selector). No changes needed, no dev task required.
+          </div>
+        </div>
+        <div class="issue-item low" style="margin-bottom:0;">
+          <div class="issue-num">?</div>
+          <div class="issue-text">
+            <strong>Verify Trigger 153 selector in GTM Preview</strong>
+            Trigger 153 is linked to the featured supplier block (<code>featured_suppliers_event</code>, Tag 150). Confirm in GTM Preview on a live P&amp;S page that it fires once per featured supplier card entered and that the supplier name variable resolves correctly. No code change needed — verification step only.
+          </div>
+        </div>
+      </div>
+
+      <!-- Client Interaction Tracking -->
+      <div class="tab-panel" id="todo-interactions" style="padding:20px 22px;">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Interactions on supplier profile pages not yet tracked (or tracked incorrectly). All use <code>client</code> as the parameter name (unified in v205 — see Reporting tab). GTM-only changes unless noted.</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Interaction</th>
+              <th>HTML signal</th>
+              <th>Proposed GA4 event</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge high">BIG</span></td>
+              <td><strong>Form submission</strong></td>
+              <td><code>CF7 dataLayer push · hidden field name="sup-name"</code></td>
+              <td><code>form_submission</code> + <code>client</code> param</td>
+              <td>Tag 193 already fires on CF7 submit. Add <code>client</code> parameter using Variable 104 (reads <code>data-website</code> from the page). Variable 104 returns the client name on profile pages and <code>null</code> on others — add a graceful fallback. Highest-value addition: ties enquiry volume directly to a named client in GA4.</td>
+            </tr>
+            <tr>
+              <td><span class="badge medium">2</span></td>
+              <td><strong>Website button click</strong></td>
+              <td><code>.article__featured-button[data-website]</code></td>
+              <td><code>client_website_click</code></td>
+              <td>The "Visit Supplier Website" button carries <code>data-website="[client name]"</code>. New click trigger on that selector. New GA4 tag: <code>client_website_click</code> with <code>client</code> param from <code>data-website</code>. High-intent signal — visitor actively navigates to the client's own site.</td>
+            </tr>
+            <tr>
+              <td><span class="badge medium">3</span></td>
+              <td><strong>Social profile clicks</strong></td>
+              <td><code>.icon-linkedin[data-linkedin] · .icon-twitter[data-twitter]</code></td>
+              <td><code>client_social_click</code> + <code>platform</code> param</td>
+              <td><strong>Existing Triggers 114 and 118 are broken</strong> — they target <code>data-company-linkedin</code> / <code>data-company-twitter</code> which don't exist in the HTML (actual attrs: <code>data-linkedin</code> / <code>data-twitter</code>). Fix in v205: new click triggers with correct attribute names, single <code>client_social_click</code> tag with <code>platform</code> (LinkedIn / Twitter) and <code>client</code> params. Delete broken Triggers 114 and 118.</td>
+            </tr>
+            <tr>
+              <td><span class="badge medium">4</span></td>
+              <td><strong>Telephone click</strong></td>
+              <td><code>.article__featured-button[data-telephone]</code></td>
+              <td><code>client_telephone_click</code></td>
+              <td>The "Call:" button carries <code>data-telephone="[client name]"</code> — not currently tracked. New click trigger + GA4 tag. Purchase-readiness signal; gives the client a concrete ROI metric.</td>
+            </tr>
+            <tr>
+              <td><span class="badge low">5</span></td>
+              <td><strong>Contact anchor click</strong></td>
+              <td><code>a[href="#contact"]</code> on profile page</td>
+              <td><code>client_contact_click</code></td>
+              <td>Soft-conversion micro-signal if an anchor link to the enquiry form exists. Confirm the anchor is in the profile page HTML before building this trigger.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- How Client Reporting Works -->
+      <div class="tab-panel" id="todo-reporting" style="padding:20px 22px;">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Current state and the v205 migration plan. After v205, all client name data flows under a single <code>client</code> parameter.</p>
+
+        <div style="font-size:13.5px;line-height:1.7;">
+          <p style="margin-bottom:12px;"><strong>The mechanism: Variable 104 → parameter → GA4</strong><br>
+          Variable 104 (<code>{{Client Page}}</code>) runs: <code>document.querySelector('[data-website]').getAttribute('data-website')</code>. On supplier profile pages, the "Visit Supplier Website" button carries <code>data-website="[client name]"</code>, so Variable 104 resolves to that name. On all other pages it returns <code>null</code>.</p>
+
+          <p style="margin-bottom:8px;"><strong>Current parameter names (pre-v205) — three different names for the same concept</strong></p>
+          <table style="margin-bottom:16px;">
+            <thead>
+              <tr><th>GA4 Event</th><th>Tag</th><th>Current param</th><th>GA4 dimension</th><th>v205 change</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>client_page_view</code></td><td>226</td><td><code>client</code></td><td>Client Name</td><td style="color:var(--low)">No change — already <code>client</code></td></tr>
+              <tr><td><code>supplier_logo_impression</code></td><td>140</td><td><code>client_logo_view</code></td><td>Company View</td><td style="color:var(--warning)">Rename to <code>client</code></td></tr>
+              <tr><td><code>supplier_content_impression</code></td><td>138</td><td><code>rn_client_name</code></td><td>Supplier Impression NAME</td><td style="color:var(--warning)">Rename to <code>client</code></td></tr>
+            </tbody>
+          </table>
+
+          <p style="margin-bottom:12px;"><strong>Why standardise to <code>client</code></strong><br>
+          The "Client Name" dimension (<code>client</code>) is already registered in GA4. Standardising to <code>client</code> means no new dimension registration — just Tags 138 and 140 updated. After migration, all events filterable with a single <code>client = [name]</code> condition in GA4 Explore and Looker Studio.</p>
+
+          <div class="issue-item warning" style="margin-bottom:12px;">
+            <div class="issue-num">!</div>
+            <div class="issue-text">
+              <strong>Do NOT simply rename the parameters — your Looker Studio reports will break</strong>
+              If Tags 138 and 140 switch from <code>rn_client_name</code> / <code>client_logo_view</code> to <code>client</code> in one go, Looker Studio reports pointing at the old dimensions stop receiving new data. Switching those reports to <code>client</code> makes historical data invisible. Either way you lose continuity at the switchover date.
+            </div>
+          </div>
+
+          <p style="margin-bottom:8px;"><strong>Correct approach: dual-parameter transition (v205 → v206, minimum 1 year)</strong></p>
+          <div class="issue-item low" style="margin-bottom:12px;">
+            <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">DATE</div>
+            <div class="issue-text">
+              <strong>Old parameters cannot be removed before 20 May 2027</strong>
+              Client contracts run for 1 year. Reporting must be able to cover the full contract period for any active client. If dual-parameter sending starts today (20 May 2026), the earliest safe removal of <code>rn_client_name</code> and <code>client_logo_view</code> is <strong>20 May 2027</strong>. Do not remove old params before that date.
+            </div>
+          </div>
+          <p style="margin-bottom:12px;"><strong>v205 (now):</strong> Tags 138 and 140 send <em>both</em> parameters simultaneously — old name and <code>client</code>. Existing Looker Studio reports keep working uninterrupted. Build new reports using <code>client</code>.</p>
+          <table style="margin-bottom:16px;font-size:13px;">
+            <thead><tr><th>Tag</th><th>v205 sends</th></tr></thead>
+            <tbody>
+              <tr><td>Tag 138 (<code>supplier_content_impression</code>)</td><td><code>rn_client_name</code> = "Rail BI" &nbsp;<strong>+</strong>&nbsp; <code>client</code> = "Rail BI"</td></tr>
+              <tr><td>Tag 140 (<code>supplier_logo_impression</code>)</td><td><code>client_logo_view</code> = "Rail BI" &nbsp;<strong>+</strong>&nbsp; <code>client</code> = "Rail BI"</td></tr>
+              <tr><td>Tag 226 (<code>client_page_view</code>)</td><td><code>client</code> = "Rail BI" &nbsp;(already correct — no change)</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-bottom:12px;"><strong>v206 (from 20 May 2027 onwards):</strong> remove <code>rn_client_name</code> and <code>client_logo_view</code> from Tags 138 and 140. All reporting runs on <code>client</code> only.</p>
+
+          <p style="margin-bottom:0;"><strong>The funnel you're building toward</strong><br>
+          Brand appeared (<code>supplier_logo_impression</code> + <code>supplier_content_impression</code>) → profile visited (<code>client_page_view</code>) → website clicked (<code>client_website_click</code>) → enquiry submitted (<code>form_submission</code> + <code>client</code>). All filterable by client name in one Looker Studio view.</p>
+        </div>
+      </div>
+
+      <!-- Magazine Tracking -->
+      <div class="tab-panel" id="todo-magazine" style="padding:20px 22px;">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Current state of magazine download tracking. GTM is set up correctly for what it can see — the gaps are primarily editorial process and WordPress content structure issues.</p>
+
+        <div style="font-size:13.5px;line-height:1.7;">
+
+          <p style="margin-bottom:8px;"><strong>What is currently tracked</strong></p>
+          <table style="margin-bottom:20px;">
+            <thead><tr><th>Tag</th><th>Event</th><th>What fires it</th><th>Key parameters</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>188</td>
+                <td><code>magazine</code></td>
+                <td>Clicking "Download" or "View as pdf" on a flipbook magazine page (Triggers 186, 217)</td>
+                <td><code>issue</code> — extracted from URL as "Issue X / YYYY"</td>
+              </tr>
+              <tr>
+                <td>214</td>
+                <td><code>magazine_pdfs_individual</code></td>
+                <td>Clicking a <code>.cards__link--download</code> card, or a heading link to a <code>/download/</code> URL (Triggers 213, 212)</td>
+                <td><code>file_url</code>, <code>link_text</code>, <code>issue_individual</code> (from ACF), <code>client</code> (Variable 104 — resolves on profile pages only)</td>
+              </tr>
+              <tr>
+                <td>Flipbook plugin</td>
+                <td><code>flipbook_*</code></td>
+                <td>All flipbook page reads — sent directly to GA4 by the plugin, not via GTM</td>
+                <td><code>book_name</code>, <code>page_number</code> — populates the two Flipbook custom dimensions</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p style="margin-bottom:8px;"><strong>Looker Studio magazine report — current structure</strong></p>
+          <p style="margin-bottom:16px;">Combines flipbook web reads (Flipbook plugin events) + full-issue downloads (Tag 188 <code>magazine</code>) + individual PDF downloads (Tag 214 <code>magazine_pdfs_individual</code>) into a single magazine activity view. The intent is that whether a reader uses the flipbook or downloads a PDF, it all counts as magazine engagement.</p>
+
+          <div class="issue-item warning" style="margin-bottom:12px;">
+            <div class="issue-num">!</div>
+            <div class="issue-text">
+              <strong>Known gap: magazine content published as standard WordPress posts is not counted</strong>
+              When magazine articles are uploaded as regular posts rather than through the magazine/download content structure, they receive no <code>magazine</code> or <code>magazine_pdfs_individual</code> events. They appear in general article view data only (<code>article_view</code>, Tag 224). There is no GTM-level fix for this — it depends on how content is uploaded.
+            </div>
+          </div>
+
+          <div class="issue-item warning" style="margin-bottom:12px;">
+            <div class="issue-num">!</div>
+            <div class="issue-text">
+              <strong>Known gap: incomplete PDF upload coverage — up to 100 PDFs per issue</strong>
+              Individual magazine PDFs need to be uploaded manually via WordPress. Up to 100 PDFs per issue — the process is tedious and there is no clean bulk upload tool. If a PDF is not uploaded, it cannot be tracked. The team's upload rigour directly determines what appears in the Looker Studio magazine report. GTM tracks everything that is there; it cannot track what has not been uploaded.
+            </div>
+          </div>
+
+          <div class="issue-item warning" style="margin-bottom:12px;">
+            <div class="issue-num">!</div>
+            <div class="issue-text">
+              <strong>Known gap: <code>issue_individual</code> depends on an ACF field being correctly set</strong>
+              Tag 214's <code>issue_individual</code> parameter (used to attribute a download to a specific magazine issue) is read from an ACF field on the download post. If that field is left blank or set incorrectly during upload, the issue attribution is empty in GA4. No GTM fix — depends on the upload process being followed correctly.
+            </div>
+          </div>
+
+          <div class="issue-item warning" style="margin-bottom:12px;">
+            <div class="issue-num">!</div>
+            <div class="issue-text">
+              <strong>Known scope overlap: client brochures on P&amp;S pages also fire <code>magazine_pdfs_individual</code></strong>
+              The <code>.cards__link--download</code> selector (Trigger 213) catches all download cards site-wide — including client product PDFs and brochures on P&amp;S pages that are not magazine content. These are counted alongside genuine magazine PDF downloads in the current event. The <code>client</code> parameter is null on these cards (Variable 104 only resolves on supplier profile pages). Decision needed: separate client documents into their own event, or keep them merged and accept the scope overlap.
+            </div>
+          </div>
+
+          <div class="issue-item low" style="margin-bottom:0;">
+            <div class="issue-num">?</div>
+            <div class="issue-text">
+              <strong>To do: review and decide on magazine tracking structure before v205</strong>
+              Four decisions required: (1) Should client documents on P&amp;S pages be separated into a <code>client_download</code> event with proper client attribution via <code>data-company-image</code>? (2) Is there a way to streamline the magazine PDF upload process (bulk importer, ACF template) to improve coverage? (3) Should magazine content published as standard posts be tagged/categorised so they can be included in magazine reporting? (4) Should the Looker Studio magazine report structure change to reflect any of the above? These are primarily editorial and WordPress process questions, not GTM questions.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GA4 Config -->
+  <div class="section">
+    <div class="section-header open" onclick="toggle(this)">
+      <h2>GA4 Configuration</h2>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="config-grid">
+        <div class="config-item">
+          <div class="key">Measurement ID</div>
+          <div class="val">G-44YRXC0RSM</div>
+        </div>
+        <div class="config-item">
+          <div class="key">Config Tag</div>
+          <div class="val">Tag 237 — GA4 — Implementation (googtag)</div>
+        </div>
+        <div class="config-item">
+          <div class="key">Config Tag Trigger</div>
+          <div class="val ok">Consent Initialization — All Pages ✓</div>
+        </div>
+        <div class="config-item">
+          <div class="key">Consent on Config Tag</div>
+          <div class="val ok">analytics_storage required ✓</div>
+        </div>
+        <div class="config-item">
+          <div class="key">Consent on Event Tags</div>
+          <div class="val ok">analytics_storage required on all 15 GA4 event tags ✓ (was NOT_SET)</div>
+        </div>
+        <div class="config-item">
+          <div class="key">Measurement ID Pattern</div>
+          <div class="val ok">measurementIdOverride removed — all event tags inherit from Tag 237 ✓</div>
+        </div>
+        <div class="config-item">
+          <div class="key">Legacy UA Property</div>
+          <div class="val ok">Variable 10 (UA-35106878-1) deleted ✓</div>
+        </div>
+        <div class="config-item">
+          <div class="key">Third-party Tags</div>
+          <div class="val ok">Apollo.io (Tag 195) — ad_storage required ✓ (was NOT_SET)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Web Dev Questions -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <h2>Questions for Web Dev</h2>
+      <span class="count">3 confirmed · updated 2026-05-20</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Question</th><th>Why it matters</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Does the CMP signal <code>ad_storage</code>?</td>
+              <td>Apollo.io tag requires <code>ad_storage</code>. If not signalled it would never fire even after consent granted.</td>
+              <td><span class="badge active">Confirmed ✓</span> Full GCM v2 — <code>ad_storage</code>, <code>ad_user_data</code>, <code>ad_personalization</code> all mapped to "Advertisement" category. <code>analytics_storage</code> → "Analytics". <code>functionality_storage</code> → "Functional".</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>What consent categories does the CMP show users?</td>
+              <td>Confirms GTM consent types map to the right user-facing categories.</td>
+              <td><span class="badge active">Confirmed ✓</span> Necessary (locked), Functional, Analytics, Performance, Advertisement. Note: "Performance" is not mapped to any GTM consent type — available for conditional script injection only.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Does the CMP set default consent states before GTM loads?</td>
+              <td>Without defaults, tags may fire on first page load before consent is recorded.</td>
+              <td><span class="badge active">Confirmed ✓</span> <code>gtag('consent', 'default', {...})</code> output server-side in <code>wp_head</code> at priority 1, before GTM. First-time visitors get all non-necessary types denied. <code>wait_for_update: 500</code> set. Implementation is correct.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Log -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <h2>Change Log &amp; Decision Record</h2>
+      <span class="count">v203 → v204 · updated 2026-05-20</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body hidden">
+      <div class="tabs">
+        <div class="tab active" onclick="showTab(this,'log-confirmed')">All Changes (14)</div>
+      </div>
+
+      <div class="tab-panel active" id="tab-log-confirmed">
+        <div class="issue-list">
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong>Tag 6 deleted — duplicate CF7 dataLayer push</strong>
+              Tag 6 was an exact duplicate of Tag 190. Both fired on All Pages, both pushed <code>cf7submission</code> to the dataLayer. Every form submission was double-counted in GA4. Tag 190 (JCS folder) kept as canonical. Tag 6 deleted.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong>Tag 11 deleted — legacy jQuery impression tracker</strong>
+              Pre-GA4 tag using jQuery scroll logic + <code>gtag('event')</code>. Superseded by Tags 138 and 140 (GA4 element visibility). Was double-counting every supplier impression alongside the modern tags.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong>Trigger 225 — <code>/suppliers/</code> exclusion corrected</strong>
+              Changed from <code>EQUALS /suppliers/</code> to <code>CONTAINS /suppliers/</code>. The EQUALS condition was only excluding the exact path — all supplier detail pages at <code>/suppliers/company-name/</code> were incorrectly firing <code>client_page_view</code>.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong>Consent mode — <code>analytics_storage</code> added to all GA4 event tags</strong>
+              Previously <code>NOT_SET</code> on all event tags, meaning they bypassed the consent gate on the config tag (Tag 237) entirely. All event tags now require <code>analytics_storage</code>, consistent with the config tag.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong><code>measurementIdOverride</code> removed from all GA4 event tags</strong>
+              Tags now inherit the Measurement ID from the config tag (Tag 237). Previously hardcoded on 17 tags — a single GA4 property change would have required editing all of them.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong>Apollo.io (Tag 195) — <code>ad_storage</code> consent gate added</strong>
+              Was firing on all pages with no GDPR consent control (<code>consentStatus: NOT_SET</code>). Now requires <code>ad_storage</code> (maps to the "Advertisement" category in the A2B Cookie Consent CMP). Under GDPR, we as data controller are responsible for gating all third-party tracking. All other GTM containers must also be checked for Apollo.io and similar US martech tools.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong>Legacy UA variable (10) deleted</strong>
+              Variable contained <code>UA-35106878-1</code>. Universal Analytics ended July 2023. No active references — purely an orphaned artefact.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">FIX</div>
+            <div class="issue-text">
+              <strong>Duplicate variables consolidated</strong>
+              Variable 16 (<code>dlv — formId</code>) deleted — exact duplicate of Variable 192. Variable 215 (<code>Custom Java Script — Client Page</code>) deleted — exact duplicate of Variable 104. Tag 214 updated to reference Variable 104.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#1b3342;color:white;min-width:28px;font-size:10px">INFO</div>
+            <div class="issue-text">
+              <strong>Flipbook tracking — no change</strong>
+              The flipbook plugin (WordPress) has its own GA4 tracking code hardcoded in its settings. It sends <code>book_name</code> and <code>page_number</code> directly to GA4. The two GA4 custom dimensions are being populated correctly. No GTM involvement needed.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#FE9E2B;color:white;min-width:28px;font-size:9px">NEW</div>
+            <div class="issue-text">
+              <strong>Banner tracking — full redesign (Tags 166, 175, 205, 207, 219 replaced)</strong>
+              <br><br>
+              <strong>Problems with old setup:</strong> (1) Tag 205 read all banners at DOM Ready — counted every banner regardless of whether it was seen, because AdRotate places all rotating banners in the DOM simultaneously. (2) No page location data — article pages produced thousands of unique URLs for what is one banner placement. (3) Homepage news and featured sections were indistinguishable. (4) GA4 custom dimension <code>fp_featured_supplier_image</code> was receiving no data due to a <code>fp_</code> vs <code>hp_</code> typo in the parameter name. (5) Click tracking used a different parameter name (<code>banner_img_src</code>) from impression tracking.
+              <br><br>
+              <strong>New approach:</strong> One Custom HTML tag (241) using IntersectionObserver fires once per banner per page load when the banner actually enters the viewport. Handles AdRotate rotation correctly: when a <code>g-dyn</code> div switches from <code>display:none</code> to <code>display:block</code>, the IntersectionObserver detects the child <code>.gofollow</code> element entering the viewport and fires. Deduplication prevents double-counting.
+              <br><br>
+              <strong>Why Ad Group ID for <code>banner_location</code>:</strong> Decoded from the <code>data-track</code> attribute on every <code>.gofollow</code> link. Chosen over URL-pattern matching because: all news/article pages share Ad Group 12 (solves the thousands-of-URLs problem); homepage news (ID 1) and featured (ID 6) are naturally distinct on the same URL; new ad groups are automatically captured without any GTM changes.
+              <br><br>
+              <strong>Known Ad Group IDs:</strong> 1 = homepage news · 6 = homepage featured · 9 = main P&amp;S · 10 = events · 12 = all article pages · 3, 4, 14, 16… = individual P&amp;S pages
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#FE9E2B;color:white;min-width:28px;font-size:9px">NEW</div>
+            <div class="issue-text">
+              <strong>Tag 240 (orphaned ad_impression push) deleted</strong>
+              Was pushing a custom <code>ad_impression</code> event to the dataLayer with no matching trigger or GA4 tag — all data silently lost. The new Tag 241 (IntersectionObserver) supersedes this approach entirely. Tag 240 deleted.
+            </div>
+          </div>
+
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#FE9E2B;color:white;min-width:28px;font-size:9px">NEW</div>
+            <div class="issue-text">
+              <strong>Two new GA4 custom dimensions required</strong>
+              <code>banner_location</code> (event scope — Ad Group ID) and <code>page_path</code> (event scope — <code>window.location.pathname</code>). Both sent by the new <code>banner_impression</code> (Tag 242) and <code>banner_click</code> (Tag 243) events. Must be registered in GA4 before importing v204 JSON.
+            </div>
+          </div>
+
+          <div class="issue-item warning">
+            <div class="issue-num">!</div>
+            <div class="issue-text">
+              <strong>DATA INTERRUPTION — <code>banner_img_src</code> ("Client Banner Clicks") — 20 May 2026</strong>
+              The "Client Banner Clicks" GA4 custom dimension (<code>banner_img_src</code>) stopped receiving data when v204 was published on <strong>20 May 2026</strong>. Old Tag 219 (which sent <code>banner_img_src</code>) was deleted as part of the banner redesign. New Tag 243 (<code>banner_click</code>) sends <code>ad_rotate_image</code> instead. The equivalent data is now available via the "AdRotate Image" dimension (<code>ad_rotate_image</code>) filtered to <code>banner_click</code> events. Historical data under <code>banner_img_src</code> is preserved in GA4. <strong>Any Looker Studio report using "Client Banner Clicks" must be updated to use "AdRotate Image" + event name = banner_click.</strong>
+              <br><br>
+              Note: <code>fp_featured_supplier_image</code> ("Homepage Featured Supplier src") also goes quiet in v204, but this dimension was already receiving no data before v204 due to a pre-existing parameter name mismatch (<code>fp_</code> vs <code>hp_</code> prefix) — no new interruption.
+            </div>
+          </div>
+
+          <div class="issue-item critical">
+            <div class="issue-num">★</div>
+            <div class="issue-text">
+              <strong>RULE — All future GTM-GA4 work: data interruptions must be flagged and confirmed before any change is made</strong>
+              Any GTM change that causes a registered GA4 custom dimension to stop receiving data is a data interruption. Before making such a change: (1) identify which registered dimensions are affected and state the exact date data will stop; (2) confirm whether any Looker Studio report uses that dimension; (3) get explicit confirmation to proceed. The v204 <code>banner_img_src</code> interruption above was accepted retrospectively — this must not happen again.
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issues -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <h2>Issues &amp; Conflicts</h2>
+      <span class="count">0 critical · 1 warning · 7 housekeeping</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body hidden">
+      <div class="tabs">
+        <div class="tab active" onclick="showTab(this,'critical')">Critical (0)</div>
+        <div class="tab" onclick="showTab(this,'warnings')">Warnings (1)</div>
+        <div class="tab" onclick="showTab(this,'housekeeping')">Housekeeping (7)</div>
+      </div>
+
+      <div class="tab-panel active" id="tab-critical">
+        <div class="issue-list">
+          <div class="issue-item low">
+            <div class="issue-num" style="background:#27ae60;color:white;font-size:10px">✓</div>
+            <div class="issue-text">
+              <strong>All critical issues resolved in v204</strong>
+              Duplicate CF7 tag deleted · legacy jQuery tracker deleted · Trigger 225 exclusion fixed · Apollo.io consent gate added · orphaned ad_impression tag deleted. See Change Log for full details.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-warnings">
+        <div class="issue-list">
+          <div class="issue-item low">
+            <div class="issue-num">✓</div>
+            <div class="issue-text">
+              <strong>Triggers 223 and 225 both fire on client article pages — confirmed intentional</strong>
+              <code>Post Pages Only</code> (Trigger 223) fires <code>article_view</code> (Tag 224) for general post engagement metrics. <code>Client Pages</code> (Trigger 225) fires <code>client_page_view</code> (Tag 226) to attribute the same pageview to a specific client. On a supplier news post, both events are wanted: one for content analytics, one for client reporting. Not a bug.
+            </div>
+          </div>
+          <div class="issue-item warning">
+            <div class="issue-num">1</div>
+            <div class="issue-text">
+              <strong>Trigger 191 has a broken filter condition</strong>
+              Checks <code>{{DLV - gtm.start}} CONTAINS "209"</code>. <code>gtm.start</code> is a Unix timestamp — the string "209" can appear in any timestamp. Trigger is currently unused, but the logic is incorrect. Delete in Phase 5 cleanup.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-housekeeping">
+        <div class="issue-list">
+          <div class="issue-item low">
+            <div class="issue-num">1</div>
+            <div class="issue-text">Trigger 149 ("Featured Suppliers GA4") has an invalid CSS selector: <code>data-company-impression</code> should be <code>[data-company-impression]</code>. Unused — delete in Phase 5.</div>
+          </div>
+          <div class="issue-item low">
+            <div class="issue-num">2</div>
+            <div class="issue-text">Variables 168 and 169 have CSS selectors in their <code>attribute</code> field — incorrect AEV configuration. Both unused — delete in Phase 5.</div>
+          </div>
+          <div class="issue-item low">
+            <div class="issue-num">3</div>
+            <div class="issue-text">Container version name is "Cookie Consent" — misleading. Rename to "v204 — Banner redesign, consent fixes, bug fixes" on publish.</div>
+          </div>
+          <div class="issue-item low">
+            <div class="issue-num">4</div>
+            <div class="issue-text">Trigger 66 uses <code>{{Click URL}}</code> as a pageview filter — should be <code>{{Page URL}}</code>. Unused but logically incorrect — delete in Phase 5.</div>
+          </div>
+          <div class="issue-item low">
+            <div class="issue-num">5</div>
+            <div class="issue-text">Four localhost/development URL triggers (IDs 65, 67, 68, 72) target <code>http://local.railway-news.com/...</code> — dev artefacts in production container. Delete in Phase 5.</div>
+          </div>
+          <div class="issue-item low">
+            <div class="issue-num">6</div>
+            <div class="issue-text">Folder organisation uses chronological naming ("JCS", "JCS 2025"). Reorganise into functional groups: Supplier Tracking, Homepage, Magazine, Forms, Ad Tracking, Legacy.</div>
+          </div>
+          <div class="issue-item low">
+            <div class="issue-num">7</div>
+            <div class="issue-text">Variable 12 ("Test") contains 200+ hardcoded <code>.logo_XXXX</code> selectors from an old tracking approach. Only referenced by the equally unused "Logo View" variable. Delete both in Phase 5.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tags -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <h2>Tags</h2>
+      <span class="count">19 total · 0 legacy (v204)</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Tag Name</th><th>Type</th><th>Status</th><th>Trigger(s)</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>237</td><td>GA4 — Implementation</td><td>Google Tag</td><td><span class="badge active">Active</span></td><td>Consent Init — All Pages</td><td>Config tag. Consent-gated. measurementId: G-44YRXC0RSM. ✓</td></tr>
+            <tr><td>190</td><td>Custom HTML Tag (Forms)</td><td>Custom HTML</td><td><span class="badge active">Active</span></td><td>All Pages</td><td>Pushes <code>cf7submission</code> to dataLayer on CF7 submit. Only CF7 push — Tag 6 (duplicate) deleted. ✓</td></tr>
+            <tr><td>193</td><td>GA4 Event — CF7 Form Submissions</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>CF7 Submission Trigger (60)</td><td>Event: <code>form_submission</code>. Parameters: <code>form_id</code>.</td></tr>
+            <tr><td>138</td><td>Supplier Content Impression</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Article Logo Impression GA4 (137)</td><td>Event: <code>supplier_content_impression</code>.</td></tr>
+            <tr><td>140</td><td>Supplier Company (Logo) Impression</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Logo Impression — Element Visibility (139)</td><td>Event: <code>supplier_logo_impression</code>.</td></tr>
+            <tr><td>150</td><td>Featured Suppliers</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Featured Suppliers (153)</td><td>Event: <code>featured_suppliers_event</code>. P&amp;S pages only.</td></tr>
+            <tr><td>164</td><td>Client Logo — images GA4</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Client Logos — images (155)</td><td>Event: <code>logo_url</code>.</td></tr>
+            <tr><td>188</td><td>Magazine Tag</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Magazine Download (186) + View as pdf (217)</td><td>Event: <code>magazine</code>.</td></tr>
+            <tr><td>195</td><td>Apollo.io Tag</td><td>Custom HTML</td><td><span class="badge active">Active</span></td><td>All Pages</td><td>B2B visitor ID. <code>ad_storage</code> consent required ✓. App ID: 66336ab7c350390572a05d4b</td></tr>
+            <tr><td>214</td><td>Magazine PDFs (individual) — tag</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Magazine PDFs text (212) + Individual (213)</td><td>Event: <code>magazine_pdfs_individual</code>. Uses {{Client Page}} var 104 ✓.</td></tr>
+            <tr><td>224</td><td>Article View Tag</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Post Pages Only (223)</td><td>Event: <code>article_view</code>. Parameters: <code>published_on</code>, <code>author</code>.</td></tr>
+            <tr><td>226</td><td>Client Page View</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Client Pages (225)</td><td>Event: <code>client_page_view</code>. /suppliers/ exclusion now CONTAINS ✓.</td></tr>
+            <tr><td>229</td><td>Homepage Click Sections</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Homepage Clicks (228)</td><td>Event: <code>hp_section_click</code>.</td></tr>
+            <tr><td>231</td><td>Homepage Visible Sections</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>Homepage Section Views (230)</td><td>Event: <code>hp_section_view</code>.</td></tr>
+            <tr><td>234</td><td>P&amp;S Click Sections</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>P&amp;S Clicks (233)</td><td>Event: <code>ps_section_click</code>.</td></tr>
+            <tr><td>236</td><td>P&amp;S Visible Sections</td><td>GA4 Event</td><td><span class="badge active">Active</span></td><td>P&amp;S Pages Section Views (235)</td><td>Event: <code>ps_section_view</code>.</td></tr>
+            <tr><td>241</td><td>Banner Impression Tracker</td><td>Custom HTML</td><td><span class="badge new">New v204</span></td><td>DOM Ready (9)</td><td>IntersectionObserver on all <code>.gofollow</code> links. Pushes <code>bannerImpression</code> event when banner enters viewport (≥50%). Handles AdRotate rotation. Deduplicates per-banner per-load.</td></tr>
+            <tr><td>242</td><td>GA4 Event — banner_impression</td><td>GA4 Event</td><td><span class="badge new">New v204</span></td><td>bannerImpression custom event (244)</td><td>Event: <code>banner_impression</code>. Parameters: <code>ad_rotate_image</code>, <code>ad_rotate_width</code>, <code>banner_location</code>, <code>page_path</code>.</td></tr>
+            <tr><td>243</td><td>GA4 Event — banner_click</td><td>GA4 Event</td><td><span class="badge new">New v204</span></td><td>All gofollow Clicks (220)</td><td>Event: <code>banner_click</code>. Parameters: <code>ad_rotate_image</code>, <code>ad_rotate_width</code>, <code>banner_location</code>, <code>page_path</code>. Replaces Tag 219.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Triggers -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <h2>Triggers</h2>
+      <span class="count">25 active · 40 unused (Phase 5)</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body hidden">
+      <div class="tabs">
+        <div class="tab active" onclick="showTab(this,'trig-active')">Active (25)</div>
+        <div class="tab" onclick="showTab(this,'trig-unused')">Unused — Phase 5 (40)</div>
+      </div>
+      <div class="tab-panel active" id="tab-trig-active">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Trigger Name</th><th>Type</th><th>Conditions</th></tr></thead>
+            <tbody>
+              <tr><td>2147479553</td><td>All Pages</td><td>Built-in</td><td>Fires on every page</td></tr>
+              <tr><td>2147479573</td><td>Consent Init — All Pages</td><td>Built-in</td><td>Consent initialisation</td></tr>
+              <tr><td>9</td><td>DOM Ready</td><td>DOM_READY</td><td>All pages, no filter</td></tr>
+              <tr><td>60</td><td>CF7 Submission Trigger</td><td>CUSTOM_EVENT</td><td><code>{{_event}}</code> equals <code>cf7submission</code></td></tr>
+              <tr><td>70</td><td>Post Loaded</td><td>DOM_READY</td><td><code>{{Post Type}}</code> equals <code>post</code></td></tr>
+              <tr><td>137</td><td>Article Logo Impression GA4</td><td>ELEMENT_VISIBILITY</td><td><code>.cards__link[href]</code>, 10% visible, many per el. Filter: Featured Suppliers TIDY non-empty</td></tr>
+              <tr><td>139</td><td>Logo Impression — Element Visibility</td><td>ELEMENT_VISIBILITY</td><td><code>[data-company-image]</code>, 10% visible, many per el</td></tr>
+              <tr><td>153</td><td>Featured Suppliers</td><td>ELEMENT_VISIBILITY</td><td>Complex selector, 10% visible. Filter: path contains <code>/products-services/</code></td></tr>
+              <tr><td>155</td><td>Client Logos — images</td><td>ELEMENT_VISIBILITY</td><td><code>.article__featured-logo[src]</code>, 10%, once per el</td></tr>
+              <tr><td>161</td><td>HP Featured Suppliers</td><td>ELEMENT_VISIBILITY</td><td><code>.block.block--blue...a.gofollow > img</code>, 10%, once per el. Filter: path equals <code>/</code></td></tr>
+              <tr><td>174</td><td>AdRotate Click Trigger</td><td>CLICK</td><td>CSS class matches <code>gofollow</code></td></tr>
+              <tr><td>186</td><td>Magazine trigger — Download</td><td>LINK_CLICK</td><td><code>{{Click Text}}</code> equals <code>Download</code></td></tr>
+              <tr><td>212</td><td>Magazine — individual PDFs (text)</td><td>LINK_CLICK</td><td>Click Classes contains <code>cards__heading__link</code> AND Click URL contains <code>/download/</code></td></tr>
+              <tr><td>213</td><td>Magazine PDFs (Individual)</td><td>LINK_CLICK</td><td>Click Classes contains <code>cards__link--download</code></td></tr>
+              <tr><td>217</td><td>Magazine trigger — View as pdf</td><td>LINK_CLICK</td><td><code>{{Click Text}}</code> equals <code>View as pdf</code></td></tr>
+              <tr><td>220</td><td>All gofollow Clicks</td><td>LINK_CLICK</td><td>Click Classes equals <code>gofollow</code></td></tr>
+              <tr><td>223</td><td>Post Pages Only</td><td>PAGEVIEW</td><td>Path NOT: <code>/</code>, <code>/products-services/</code>, <code>/videos/</code>, <code>/suppliers/</code>, <code>/events-exhibition</code>, <code>/contact/</code>, <code>/about-us/</code>, <code>/subscribe/</code>, <code>/add-your-company/</code>, <code>/magazines/</code>, <code>/news/</code></td></tr>
+              <tr><td>225</td><td>Client Pages</td><td>PAGEVIEW</td><td>Path NOT: <code>/</code>, <code>/products-services/</code>, <code>/contact/</code>, etc. AND path NOT CONTAINS <code>/suppliers/</code> <span class="badge active">CONTAINS ✓ fixed</span></td></tr>
+              <tr><td>228</td><td>Homepage Clicks</td><td>LINK_CLICK</td><td>Page path equals <code>/</code></td></tr>
+              <tr><td>230</td><td>Homepage Section Views</td><td>ELEMENT_VISIBILITY</td><td><code>section[class], header[class], footer[class]</code>, 20%, once per el. Filter: path equals <code>/</code></td></tr>
+              <tr><td>233</td><td>P&amp;S Clicks</td><td>LINK_CLICK</td><td>Page path contains <code>/products-services/</code></td></tr>
+              <tr><td>235</td><td>P&amp;S Pages Section Views</td><td>ELEMENT_VISIBILITY</td><td><code>section[class], header[class], footer[class]</code>, 20%, once per el. Filter: path contains <code>/products-services/</code></td></tr>
+              <tr><td>238</td><td>HPFS — ID=creative</td><td>ELEMENT_VISIBILITY</td><td>ID selector <code>#creative</code>, 10%, once per el</td></tr>
+              <tr><td>239</td><td>Homepage Trigger</td><td>PAGEVIEW</td><td>Page path equals <code>/</code></td></tr>
+              <tr><td>244</td><td>bannerImpression custom event</td><td>CUSTOM_EVENT</td><td><code>{{_event}}</code> equals <code>bannerImpression</code> — <span class="badge new">New v204</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-trig-unused">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Trigger Name</th><th>Type</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>6</td><td>Test Event</td><td>CUSTOM_EVENT</td><td>Dev artefact — delete</td></tr>
+              <tr><td>62</td><td>Supplier Page Main</td><td>PAGEVIEW</td><td>Superseded</td></tr>
+              <tr><td>64</td><td>Supplier Page Live</td><td>PAGEVIEW</td><td>Duplicate of 62</td></tr>
+              <tr><td>65</td><td>Homepage Localhost URL</td><td>PAGEVIEW</td><td><span class="badge legacy">Dev localhost URL</span></td></tr>
+              <tr><td>66</td><td>Railway News Live URL</td><td>PAGEVIEW</td><td>Uses <code>{{Click URL}}</code> not <code>{{Page URL}}</code> — config error</td></tr>
+              <tr><td>67</td><td>Homepage Localhost with slash</td><td>PAGEVIEW</td><td><span class="badge legacy">Dev localhost URL</span></td></tr>
+              <tr><td>68</td><td>Supplier Page detail view</td><td>PAGEVIEW</td><td><span class="badge legacy">Dev localhost URL</span></td></tr>
+              <tr><td>69</td><td>Suppliers Page Detail Live URL</td><td>PAGEVIEW</td><td>Superseded</td></tr>
+              <tr><td>72</td><td>Page View Products services</td><td>PAGEVIEW</td><td><span class="badge legacy">Dev localhost URL</span></td></tr>
+              <tr><td>79</td><td>PDF Page</td><td>PAGEVIEW</td><td>URL contains /download/ — no tag</td></tr>
+              <tr><td>81</td><td>Social Click — LinkedIn</td><td>CLICK</td><td>Class <code>gds__--linkedin</code> — no tag</td></tr>
+              <tr><td>82</td><td>Social Click — Twitter</td><td>CLICK</td><td>Class <code>gds__--twitter</code> — no tag</td></tr>
+              <tr><td>83</td><td>Social Click — Facebook</td><td>CLICK</td><td>Class <code>gds__--facebook</code> — no tag</td></tr>
+              <tr><td>84</td><td>Phonecall Click</td><td>CLICK</td><td>Class <code>gds__--tel</code> — no tag</td></tr>
+              <tr><td>85</td><td>PDF Click</td><td>CLICK</td><td>Click URL contains <code>.pdf</code> — no tag</td></tr>
+              <tr><td>88</td><td>PDF Inner Click — Span</td><td>CLICK</td><td>Class <code>--pdf</code> + text contains DOWNLOAD — no tag</td></tr>
+              <tr><td>91</td><td>Video Page Trigger</td><td>PAGEVIEW</td><td>URL starts with /videos/ — no tag</td></tr>
+              <tr><td>93</td><td>Supplier Website Click</td><td>CLICK</td><td>Text contains VIEW WEBSITE on suppliers path — no tag</td></tr>
+              <tr><td>96</td><td>PDF page — click — website</td><td>PAGEVIEW</td><td>URL contains /download/ — no tag</td></tr>
+              <tr><td>98</td><td>Products&amp;Services Page Trigger</td><td>PAGEVIEW</td><td>URL starts with /products-services — no tag</td></tr>
+              <tr><td>101</td><td>Logo Viewed</td><td>ELEMENT_VISIBILITY</td><td>Version 2 folder, superseded</td></tr>
+              <tr><td>112</td><td>Click Website</td><td>CLICK</td><td>CSS <code>[data-company-website]</code> — no tag</td></tr>
+              <tr><td>114</td><td>Click Client Twitter</td><td>CLICK</td><td>CSS <code>[data-company-twitter]</code> — no tag</td></tr>
+              <tr><td>116</td><td>Click Client Facebook</td><td>CLICK</td><td>CSS <code>[data-company-facebook]</code> — no tag</td></tr>
+              <tr><td>118</td><td>Click Client Linkedin</td><td>CLICK</td><td>CSS <code>[data-company-linkedin]</code> — no tag</td></tr>
+              <tr><td>123</td><td>Click Client Gallery Image</td><td>CLICK</td><td>CSS <code>[data-company-gallery]</code> — no tag</td></tr>
+              <tr><td>126</td><td>Click Client PDF</td><td>LINK_CLICK</td><td>Click URL contains <code>.pdf</code> — Version 2, no tag</td></tr>
+              <tr><td>128</td><td>Article Logo Impression</td><td>ELEMENT_VISIBILITY</td><td>Version 2, superseded by trigger 137</td></tr>
+              <tr><td>131</td><td>Article Impressions</td><td>ELEMENT_VISIBILITY</td><td><code>.card__link</code>, 50% — no tag</td></tr>
+              <tr><td>135</td><td>Form Submission trigger</td><td>FORM_SUBMISSION</td><td>All forms — no tag</td></tr>
+              <tr><td>141</td><td>Client Name Trigger GA4</td><td>ELEMENT_VISIBILITY</td><td><code>.card_link</code> (possible typo — missing double underscore?) — no tag</td></tr>
+              <tr><td>149</td><td>Featured Suppliers GA4</td><td>ELEMENT_VISIBILITY</td><td><span class="badge broken">Invalid CSS selector</span> — missing [] brackets around attribute</td></tr>
+              <tr><td>157</td><td>Post Published GA4</td><td>ELEMENT_VISIBILITY</td><td><code>.published__timestamp</code> — no tag</td></tr>
+              <tr><td>158</td><td>AdRotate GA4</td><td>ELEMENT_VISIBILITY</td><td><code>.gofollow</code> — no tag</td></tr>
+              <tr><td>173</td><td>AdRotate image trigger</td><td>ELEMENT_VISIBILITY</td><td>Replaced by dynamic approach</td></tr>
+              <tr><td>177</td><td>Data Type — Advert</td><td>ELEMENT_VISIBILITY</td><td><code>.card[data-type="advert"]</code> — no tag</td></tr>
+              <tr><td>179</td><td>HP Supplier News scroll</td><td>SCROLL_DEPTH</td><td>27% scroll on homepage — no tag</td></tr>
+              <tr><td>191</td><td>Form Submission cf7submission</td><td>CUSTOM_EVENT</td><td><span class="badge broken">Broken filter</span> — uses gtm.start timestamp as ID check</td></tr>
+              <tr><td>196</td><td>Form Submission — Magazine Download</td><td>PAGEVIEW</td><td>URL contains /magazines/ — no tag</td></tr>
+              <tr><td>206</td><td>AdRotate dynamic — DOM Ready Trigger</td><td>DOM_READY</td><td>Superseded by trigger 9</td></tr>
+              <tr><td>209</td><td>AdRotate dynamic custom event trigger</td><td>CUSTOM_EVENT</td><td><code>{{_event}}</code> equals <code>imgSrcEvent</code> — Tag 207 deleted, orphaned</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Variables -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <h2>Variables</h2>
+      <span class="count">37 active · 24 unused (Phase 5)</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body hidden">
+      <div class="tabs">
+        <div class="tab active" onclick="showTab(this,'var-active')">Active (37)</div>
+        <div class="tab" onclick="showTab(this,'var-unused')">Unused — Phase 5 (24)</div>
+      </div>
+      <div class="tab-panel active" id="tab-var-active">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Variable Name</th><th>Type</th><th>Value / Config</th><th>Used By</th></tr></thead>
+            <tbody>
+              <tr><td>17</td><td>Post Type</td><td>Data Layer</td><td><code>pagePostType</code></td><td>Trigger 70</td></tr>
+              <tr><td>104</td><td>Client Page</td><td>Custom JS</td><td><code>document.querySelector('[data-website]').getAttribute(...)</code></td><td>Tags 226, 214</td></tr>
+              <tr><td>106</td><td>Client Logo</td><td>AEV</td><td><code>data-company-image</code> attr</td><td>{{Client Logo TIDY}}</td></tr>
+              <tr><td>129</td><td>Client Impression Page</td><td>AEV</td><td><code>href</code> of visible el</td><td>{{Client Impression Page - formatted}}</td></tr>
+              <tr><td>144</td><td>Post Published Date</td><td>Custom JS</td><td>Extracts date from 2nd <code>.scroller__info-text</code></td><td>Tag 224</td></tr>
+              <tr><td>145</td><td>Profile Live</td><td>DOM Element</td><td><code>[data-distil]</code> → <code>.PublishedOnUTC</code></td><td>Analytics ID var dim 6</td></tr>
+              <tr><td>147</td><td>Featured Suppliers</td><td>DOM Element</td><td>Complex selector → <code>data-company-impression</code></td><td>Analytics ID var dim 7</td></tr>
+              <tr><td>148</td><td>AdRotate</td><td>DOM Element</td><td><code>.gofollow</code> href</td><td>Analytics ID var dim 8</td></tr>
+              <tr><td>152</td><td>Featured Suppliers — RAW</td><td>AEV</td><td><code>data-company-impression</code> attr</td><td>{{Featured Suppliers - TIDY}}</td></tr>
+              <tr><td>154</td><td>Client Logos — images</td><td>AEV</td><td><code>src</code> attr</td><td>Tag 164, formatted var</td></tr>
+              <tr><td>160</td><td>Element Attribute = src (HPFS)</td><td>AEV</td><td><code>src</code> attr</td><td>HPFS substring var</td></tr>
+              <tr><td>163</td><td>Client Impression Page — formatted</td><td>Custom JS</td><td>Strips <code>https:</code> → pathname</td><td>Tag 138</td></tr>
+              <tr><td>172</td><td>AdRotate image</td><td>DOM Element</td><td><code>.gofollow>img</code> → <code>src</code></td><td>{{AdRotate image - formatted}}</td></tr>
+              <tr><td>181</td><td>AdRotate image — formatted</td><td>Custom JS</td><td>Strips <code>https:</code> from {{AdRotate image}}</td><td>Tags 175-era; legacy reference</td></tr>
+              <tr><td>182</td><td>Element Attribute = src (HPFS) — substring(6)</td><td>Custom JS</td><td>Strips <code>https:</code> from HPFS src</td><td>Legacy reference</td></tr>
+              <tr><td>184</td><td>Featured Suppliers — TIDY</td><td>Custom JS</td><td>Strips HTML from {{Featured Suppliers - RAW}}</td><td>Tags 138, 150; Trigger 137</td></tr>
+              <tr><td>187</td><td>Magazine Variable</td><td>Custom JS</td><td>Extracts <code>Issue X / YYYY</code> from URL</td><td>Tag 188</td></tr>
+              <tr><td>192</td><td>Form Submission — FormID</td><td>Data Layer</td><td><code>formId</code></td><td>Tag 193</td></tr>
+              <tr><td>194</td><td>Content Impressions — Publication Date</td><td>Custom JS</td><td>Extracts date from <code>.card__timestamp</code></td><td>Tag 138</td></tr>
+              <tr><td>198</td><td>DLV — gtm.start</td><td>Data Layer (v1)</td><td><code>gtm.start</code></td><td>Trigger 191 (unused), var 199</td></tr>
+              <tr><td>204</td><td>AdRotate dynamic</td><td>Custom JS</td><td>Collects src from <code>.gofollow > img</code> with width</td><td>Legacy; Tag 205 deleted</td></tr>
+              <tr><td>208</td><td>dlv — imgSrc</td><td>Data Layer</td><td><code>imgSrc</code></td><td>Legacy; Tag 207 deleted</td></tr>
+              <tr><td>210</td><td>dlv — imgWidth</td><td>Data Layer</td><td><code>imgWidth</code></td><td>Legacy; Tags 207/166 deleted</td></tr>
+              <tr><td>211</td><td>Client Logo TIDY</td><td>Custom JS</td><td>Strips HTML from {{Client Logo}}</td><td>Tag 140</td></tr>
+              <tr><td>216</td><td>Magazine Issue variable</td><td>Custom JS</td><td>Traverses DOM for <code>data-issue</code></td><td>Tag 214</td></tr>
+              <tr><td>218</td><td>Client — Banner Click</td><td>Custom JS</td><td>Extracts client name from img src path</td><td>Legacy; Tag 219 replaced by 243</td></tr>
+              <tr><td>222</td><td>Author</td><td>Custom JS</td><td>Gets text of first <code>p.scroller__info-text</code></td><td>Tag 224</td></tr>
+              <tr><td>227</td><td>Clicks Section</td><td>Custom JS</td><td>Traverses click el upward to find section/header/footer</td><td>Tags 229, 234</td></tr>
+              <tr><td>232</td><td>Visible Section Class</td><td>AEV</td><td><code>class</code> of visible el</td><td>Tags 231, 236</td></tr>
+              <tr><td>233</td><td>dlv — bannerImgSrc</td><td>Data Layer</td><td><code>bannerImgSrc</code></td><td>Tag 242 — <span class="badge new">New v204</span></td></tr>
+              <tr><td>234</td><td>dlv — bannerWidth</td><td>Data Layer</td><td><code>bannerWidth</code></td><td>Tag 242 — <span class="badge new">New v204</span></td></tr>
+              <tr><td>235</td><td>dlv — bannerLocation</td><td>Data Layer</td><td><code>bannerLocation</code></td><td>Tag 242 — <span class="badge new">New v204</span></td></tr>
+              <tr><td>236</td><td>Banner Click — Image Src</td><td>Custom JS</td><td>Gets <code>src</code> from img inside clicked <code>.gofollow</code></td><td>Tag 243 — <span class="badge new">New v204</span></td></tr>
+              <tr><td>237</td><td>Banner Click — Width</td><td>Custom JS</td><td>Gets <code>width</code> attr, strips non-numeric chars</td><td>Tag 243 — <span class="badge new">New v204</span></td></tr>
+              <tr><td>238</td><td>Banner Click — Location</td><td>Custom JS</td><td>Decodes <code>data-track</code> base64, returns placement ID (field [1])</td><td>Tag 243 — <span class="badge new">New v204</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-panel" id="tab-var-unused">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Variable Name</th><th>Type</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>12</td><td>Test</td><td>DOM Element</td><td><span class="badge legacy">Old artefact</span> — 200+ hardcoded .logo_XXXX selectors. Delete in Phase 5.</td></tr>
+              <tr><td>11</td><td>Logo View</td><td>Element Visibility</td><td>Only references {{Test}} — circular and unused. Delete in Phase 5.</td></tr>
+              <tr><td>14</td><td>TEST DOM</td><td>DOM Element</td><td>Test artefact — delete in Phase 5.</td></tr>
+              <tr><td>1</td><td>Page Title</td><td>Data Layer</td><td><code>pageTitle</code> — no active tag uses it.</td></tr>
+              <tr><td>5</td><td>Supplier Name</td><td>Data Layer</td><td><code>supplierName</code> — no tag.</td></tr>
+              <tr><td>6</td><td>Supplier Categories</td><td>Data Layer</td><td><code>supplierCategories</code> — no tag.</td></tr>
+              <tr><td>7</td><td>Post ID</td><td>Data Layer</td><td><code>postID</code> — no tag.</td></tr>
+              <tr><td>8</td><td>Supplier Category</td><td>Data Layer</td><td><code>supplierCategory</code> — no tag.</td></tr>
+              <tr><td>9</td><td>Supplier Names</td><td>Data Layer</td><td><code>supplierNames</code> — no tag.</td></tr>
+              <tr><td>15</td><td>dlv — Form Subject</td><td>Data Layer</td><td>Old CF7 response parsing — no tag.</td></tr>
+              <tr><td>102</td><td>Supplier Logo ID</td><td>Custom JS</td><td>Strips digits from click class — no tag.</td></tr>
+              <tr><td>108</td><td>Client Website</td><td>DOM Element</td><td><code>data-company-website</code> — triggers exist but no tag.</td></tr>
+              <tr><td>109</td><td>Client Twitter</td><td>DOM Element</td><td><code>data-company-twitter</code> — no tag.</td></tr>
+              <tr><td>110</td><td>Client Facebook</td><td>DOM Element</td><td><code>data-company-facebook</code> — no tag.</td></tr>
+              <tr><td>111</td><td>Client Linkedin</td><td>DOM Element</td><td><code>data-company-linkedin</code> — no tag.</td></tr>
+              <tr><td>124</td><td>Client Gallery Image</td><td>DOM Element</td><td><code>data-company-gallery</code> — no tag.</td></tr>
+              <tr><td>133</td><td>Article URL</td><td>DOM Element</td><td><code>.card__link</code> href — no tag.</td></tr>
+              <tr><td>165</td><td>Client Logos — images — formatted</td><td>Custom JS</td><td>Strips https: but Tag 164 uses the raw variable. Unused.</td></tr>
+              <tr><td>167</td><td>Data Type</td><td>AEV</td><td><code>data-type</code> attr — no tag.</td></tr>
+              <tr><td>168</td><td>Supplier URL — Article Impressions</td><td>AEV</td><td><span class="badge broken">CSS selector in attribute field</span> — broken config.</td></tr>
+              <tr><td>169</td><td>Supplier NAME — Article Impressions</td><td>AEV</td><td><span class="badge broken">CSS selector in attribute field</span> — broken config.</td></tr>
+              <tr><td>170</td><td>Supplier URL — Article Impressions — formatted</td><td>Custom JS</td><td>Formats broken var 168 — no tag.</td></tr>
+              <tr><td>176</td><td>HP Featured Supplier Image</td><td>AEV</td><td><code>src</code> attr — no tag.</td></tr>
+              <tr><td>178</td><td>Image alt attribute</td><td>AEV</td><td><span class="badge broken">CSS selector in attribute field</span> — broken config. No tag.</td></tr>
+              <tr><td>183</td><td>News Category</td><td>DOM Element</td><td>Article tags h3 text — no tag.</td></tr>
+              <tr><td>199</td><td>JS — Fire Once Per Start (CF7)</td><td>Custom JS</td><td>localStorage deduplication — defined but never used in trigger or tag.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GA4 Events Reference -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <h2>GA4 Events Reference (v204)</h2>
+      <span class="count">15 events · all consent-gated</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>GA4 Event</th><th>Tag</th><th>Key Parameters</th><th>What it tracks</th></tr></thead>
+          <tbody>
+            <tr><td><code>supplier_content_impression</code></td><td>138</td><td>supplier_name, page</td><td>Supplier article cards appearing in viewport</td></tr>
+            <tr><td><code>supplier_logo_impression</code></td><td>140</td><td>client_logo</td><td>Supplier logos appearing in viewport</td></tr>
+            <tr><td><code>featured_suppliers_event</code></td><td>150</td><td>supplier_name</td><td>Featured supplier blocks on P&amp;S pages</td></tr>
+            <tr><td><code>logo_url</code></td><td>164</td><td>client_logo</td><td>Client logo images (article featured logo)</td></tr>
+            <tr><td><code>magazine</code></td><td>188</td><td>magazine_issue</td><td>Magazine download / view as PDF</td></tr>
+            <tr><td><code>form_submission</code></td><td>193</td><td>form_id</td><td>CF7 form submissions</td></tr>
+            <tr><td><code>magazine_pdfs_individual</code></td><td>214</td><td>client, magazine_issue</td><td>Individual magazine PDF downloads</td></tr>
+            <tr><td><code>article_view</code></td><td>224</td><td>published_on, author</td><td>Post/article page views</td></tr>
+            <tr><td><code>client_page_view</code></td><td>226</td><td>client</td><td>Client profile page views</td></tr>
+            <tr><td><code>hp_section_click</code></td><td>229</td><td>click_section, click_text, click_url</td><td>Homepage link clicks</td></tr>
+            <tr><td><code>hp_section_view</code></td><td>231</td><td>visible_section_class</td><td>Homepage section visibility</td></tr>
+            <tr><td><code>ps_section_click</code></td><td>234</td><td>click_section, click_text, click_url</td><td>P&amp;S page link clicks</td></tr>
+            <tr><td><code>ps_section_view</code></td><td>236</td><td>visible_section_class</td><td>P&amp;S section visibility</td></tr>
+            <tr><td><code>banner_impression</code></td><td>242</td><td>ad_rotate_image, ad_rotate_width, banner_location, page_path</td><td>Banner enters viewport (IntersectionObserver ≥50%) — <span class="badge new">New v204</span></td></tr>
+            <tr><td><code>banner_click</code></td><td>243</td><td>ad_rotate_image, ad_rotate_width, banner_location, page_path</td><td>All .gofollow link clicks — <span class="badge new">New v204</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="padding: 16px 22px; font-size: 13px; color: var(--muted);">
+        <strong>Ad Group IDs (banner_location):</strong> 1 = homepage news &nbsp;·&nbsp; 6 = homepage featured suppliers &nbsp;·&nbsp; 9 = main P&amp;S &nbsp;·&nbsp; 10 = events &nbsp;·&nbsp; 12 = all article/news pages &nbsp;·&nbsp; 3, 4, 14, 16… = individual P&amp;S pages (each has its own ID; new groups captured automatically)
+      </div>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="section">
+    <div class="section-header open" onclick="toggle(this)">
+      <h2>Recommendations</h2>
+      <span class="count">5 pending · v204 live · import complete</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="tbl-wrap">
+        <table class="reco-row">
+          <thead><tr><th>#</th><th>Priority</th><th>Action</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><span class="badge high">High</span></td><td>Check all other GTM containers (Airport Industry-News, Bus-News, Maritime Industry-News, Future Transport-News) for Apollo.io / US martech consent gates</td><td>Pending</td></tr>
+            <tr><td>2</td><td><span class="badge medium">Medium</span></td><td>Phase 5 — bulk-delete the 40 unused triggers (after v204 confirmed stable in production)</td><td>Pending — wait for stability confirmation</td></tr>
+            <tr><td>3</td><td><span class="badge medium">Medium</span></td><td>Phase 5 — bulk-delete 24 unused variables</td><td>Pending — same as above</td></tr>
+            <tr><td>4</td><td><span class="badge low">Low</span></td><td>Reorganise GTM folders from chronological ("JCS", "JCS 2025") to functional groupings — confirmed to proceed. Suggested: Supplier Tracking · Homepage · Magazine · Forms · Ad Tracking · Legacy</td><td>Approved — GTM UI action, no JSON change needed</td></tr>
+            <tr><td>5</td><td><span class="badge low">Low</span></td><td>Consider additional GA4 custom dimensions: <code>author</code> (article_view), <code>form_id</code> (form_submission), <code>hp_click_text/url</code>, <code>ps_click_text/url</code></td><td>Future consideration</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Register all GA4 custom dimensions (banner_location, page_path, and all others)</td><td>Confirmed ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Import, preview, test, and publish v204</td><td>Live 20 May 2026 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Confirm Tags 224 + 226 co-firing on client article pages — intentional (general post metrics + client attribution)</td><td>Confirmed ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Delete Tag 6 (duplicate CF7 push)</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Delete Tag 11 (legacy jQuery impression tracker)</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Delete Tag 240 (orphaned ad_impression push)</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Fix Trigger 225: /suppliers/ exclusion EQUALS → CONTAINS</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Add consent gate to Apollo.io Tag 195 (ad_storage)</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Set analytics_storage on all GA4 event tags</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Remove measurementIdOverride from all GA4 event tags</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Delete legacy UA variable (10)</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Consolidate duplicate variables 104/215 and 16/192</td><td>v204 ✓</td></tr>
+            <tr style="opacity:0.5"><td>—</td><td><span class="badge done">Done ✓</span></td><td>Full banner redesign: Tags 166, 175, 205, 207, 219 → Tags 241, 242, 243</td><td>v204 ✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<button class="back-to-top" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  function toggle(header) {
+    header.classList.toggle('open');
+    const body = header.nextElementSibling;
+    body.classList.toggle('hidden');
+  }
+
+  function switchTab(tabsId, panelId) {
+    const container = document.getElementById(tabsId);
+    container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const clicked = [...container.querySelectorAll('.tab')].find(t => t.getAttribute('onclick') && t.getAttribute('onclick').includes(panelId));
+    if (clicked) clicked.classList.add('active');
+    const section = container.closest('.section-body');
+    section.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(panelId).classList.add('active');
+  }
+
+  function showTab(tab, panelId) {
+    const tabs = tab.parentElement.querySelectorAll('.tab');
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const section = tab.closest('.section-body');
+    section.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + panelId).classList.add('active');
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('btt').classList.toggle('visible', window.scrollY > 300);
+  });
+</script>
+</body>
+</html>
