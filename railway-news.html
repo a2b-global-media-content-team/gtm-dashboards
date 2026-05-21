@@ -302,27 +302,19 @@
   <div class="section">
     <div class="section-header open" onclick="toggle(this)">
       <h2>Next Steps</h2>
-      <span class="count">v204 live · v205 consent fix ready to import · dev tasks pending</span>
+      <span class="count">v205 live · dev tasks pending · apply consent fix to other containers</span>
       <span class="chevron">▼</span>
     </div>
     <div class="section-body">
       <div class="issue-list">
 
-        <div style="padding: 4px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v205 — Ready to Import</div>
+        <div style="padding: 4px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v205 — Live ✓</div>
 
-        <div class="issue-item low" style="border-left-color:#9789B4;background:#f6f4fb;">
-          <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">v205</div>
+        <div class="issue-item low" style="opacity:0.6">
+          <div class="issue-num" style="background:#27ae60;color:white;font-size:10px;min-width:28px">✓</div>
           <div class="issue-text">
-            <strong>Consent re-trigger fix — <code>GTM-KQ4VZD5_v205_consent_fix.json</code> ready</strong>
-            First-session page views are currently lost: when a new visitor accepts consent, the GA4 config tag has already missed its trigger window. This JSON adds:
-            <br><br>
-            &nbsp;&nbsp;<strong>Variable 240:</strong> <code>{{DLV - analytics}}</code> — reads <code>analytics</code> key from dataLayer<br>
-            &nbsp;&nbsp;<strong>Trigger 245:</strong> <code>Consent Granted - Analytics</code> — Custom Event <code>a2b_consent_updated</code> with condition <code>{{DLV - analytics}}</code> equals <code>granted</code><br>
-            &nbsp;&nbsp;<strong>10 tags updated</strong> with Trigger 245 as additional firing trigger: Tag 237 (config), 138, 140, 150, 164, 224, 226, 231, 236, 241
-            <br><br>
-            Import with <strong>Overwrite</strong> mode. No tags deleted. No custom dimensions affected. Safe to import immediately — no dependency on dev tasks.
-            <br><br>
-            <strong>After publishing v205:</strong> apply the same consent re-trigger pattern to all other containers (Bus-News, Airport Industry-News, Future Transport-News, Maritime Industry-News).
+            <strong>Consent re-trigger fix — published 21 May 2026</strong>
+            Variable 240 (<code>{{DLV - analytics}}</code>) + Trigger 245 (<code>Consent Granted - Analytics</code>, Custom Event <code>a2b_consent_updated</code> with condition <code>analytics = granted</code>) added. Applied to 10 tags: Tag 237 (config), 138, 140, 150, 164, 224, 226, 231, 236, 241. First-session page views now captured after consent acceptance. No tags deleted, no custom dimensions affected.
           </div>
         </div>
 
