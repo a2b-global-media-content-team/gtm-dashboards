@@ -302,7 +302,7 @@
   <div class="section">
     <div class="section-header open" onclick="toggle(this)">
       <h2>Next Steps</h2>
-      <span class="count">v205 live · dev tasks pending · apply consent fix to other containers</span>
+      <span class="count">v205 live · debug verified 21 May · 2 dev tasks outstanding · consent fix in progress for other containers</span>
       <span class="chevron">▼</span>
     </div>
     <div class="section-body">
@@ -315,6 +315,45 @@
           <div class="issue-text">
             <strong>Consent re-trigger fix — published 21 May 2026</strong>
             Variable 240 (<code>{{DLV - analytics}}</code>) + Trigger 245 (<code>Consent Granted - Analytics</code>, Custom Event <code>a2b_consent_updated</code> with condition <code>analytics = granted</code>) added. Applied to 10 tags: Tag 237 (config), 138, 140, 150, 164, 224, 226, 231, 236, 241. First-session page views now captured after consent acceptance. No tags deleted, no custom dimensions affected.
+          </div>
+        </div>
+
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Debug Mode Verified — 21 May 2026</div>
+
+        <div class="issue-item low" style="border-left-color: #27ae60; background: #f0faf5;">
+          <div class="issue-num" style="background:#27ae60;color:white;font-size:10px;min-width:28px">✓</div>
+          <div class="issue-text">
+            <strong>Confirmed working in GA4 debug mode — 21 May 2026</strong>
+            <ul style="margin:8px 0 0; padding-left:18px; font-size:13px; line-height:1.7;">
+              <li>Logo impressions (<code>supplier_logo_impression</code>) — homepage and /news/ page ✓</li>
+              <li>Content impressions (<code>supplier_content_impression</code>) — homepage and /news/ page ✓</li>
+              <li>Banner tracking — homepage ✓</li>
+              <li>Individual supplier news pages — tracking working correctly ✓</li>
+              <li>Editorial news pages — tracking working correctly ✓</li>
+              <li>Main /suppliers/ page — client logo tracking working correctly ✓</li>
+              <li>Magazine PDFs — individual profile page downloads tracking correctly ✓</li>
+              <li>Magazine download — working correctly ✓</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="issue-item warning" style="border-left-color: #e67e22; background: #fef9f0;">
+          <div class="issue-num" style="background:#e67e22;color:white;font-size:9px;min-width:28px">DEV</div>
+          <div class="issue-text">
+            <strong>Homepage video section — logo impressions not tracking</strong>
+            Logos in the <strong>video section on the homepage</strong> are not firing <code>supplier_logo_impression</code>. GTM Trigger 139 targets <code>[data-company-image]</code> — logos in this section are missing that attribute.
+            <br><br>
+            <strong>Dev task:</strong> Add <code>data-company-image="[Client Name]"</code> to logo <code>&lt;img&gt;</code> elements in the homepage video section. Client name must match exactly what is used on article cards for the same client. No GTM changes needed once the attribute is in place.
+          </div>
+        </div>
+
+        <div class="issue-item warning" style="border-left-color: #e67e22; background: #fef9f0;">
+          <div class="issue-num" style="background:#e67e22;color:white;font-size:9px;min-width:28px">DEV</div>
+          <div class="issue-text">
+            <strong>P&amp;S page video section — logo impressions not tracking</strong>
+            Logos in the <strong>video section on P&amp;S pages</strong> are not firing <code>supplier_logo_impression</code>. Same root cause as homepage — logos missing the <code>data-company-image</code> attribute.
+            <br><br>
+            <strong>Dev task:</strong> Add <code>data-company-image="[Client Name]"</code> to logo <code>&lt;img&gt;</code> elements in the P&amp;S video section. No GTM changes needed once the attribute is in place.
           </div>
         </div>
 
