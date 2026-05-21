@@ -672,7 +672,7 @@
       <div class="tbl-wrap">
         <table>
           <thead>
-            <tr><th>#</th><th>Tag Name</th><th>Type</th><th>Event Name</th><th>Status</th><th>Trigger(s)</th><th>Folder</th><th>Issues</th></tr>
+            <tr><th>#</th><th>Tag Name</th><th>Type</th><th>Event Name</th><th>Status</th><th>Purpose</th><th>GA4 Dimension(s)</th><th>Trigger(s)</th><th>Folder</th><th>Issues</th></tr>
           </thead>
           <tbody>
             <tr>
@@ -681,6 +681,8 @@
               <td>Google Tag</td>
               <td>—</td>
               <td><span class="badge active">Active ✓</span></td>
+              <td>Initialises GA4 — sends config to the property before any events fire</td>
+              <td>—</td>
               <td>Consent Init — All Pages</td>
               <td>JCS 2025</td>
               <td>Config tag. Correctly requires <code>analytics_storage</code>. measurementId: G-DR1SNWSLJ8. ✓</td>
@@ -691,9 +693,11 @@
               <td>GA4 Event</td>
               <td><code>supplier_content_impression</code></td>
               <td><span class="badge legacy">Consent ✗</span></td>
+              <td>Records when a supplier article card enters the viewport — enables impression reporting per article and supplier</td>
+              <td>Supplier Impression NAME (<code>ftn_client_name</code>)<br>Supplier Impression DATE (<code>impression_published</code>)<br>Supplier Impression URL (<code>client_article_impression</code>)</td>
               <td>Article Logo Impression GA4 (11)</td>
               <td>JCS 2025</td>
-              <td>Consent NOT_SET; measurementIdOverride hardcoded. Params: <code>client_article_impression</code>, <code>ftn_client_name</code>, <code>impression_published</code></td>
+              <td>Consent fixed in v1. measurementIdOverride hardcoded.</td>
             </tr>
             <tr>
               <td>26</td>
@@ -701,9 +705,11 @@
               <td>GA4 Event</td>
               <td><code>featured_suppliers_event</code></td>
               <td><span class="badge legacy">Consent ✗</span></td>
+              <td>Tracks when a featured supplier block enters the viewport on P&amp;S pages</td>
+              <td>Featured Suppliers (<code>featured_suppliers_parameter</code>)</td>
               <td>Featured Suppliers New Site (39)</td>
               <td>JCS</td>
-              <td>Consent NOT_SET; measurementIdOverride hardcoded. Param: <code>featured_suppliers_parameter</code></td>
+              <td>Consent fixed in v1. measurementIdOverride hardcoded.</td>
             </tr>
             <tr>
               <td>28</td>
@@ -711,9 +717,11 @@
               <td>GA4 Event</td>
               <td><code>adrotate_locations</code></td>
               <td><span class="badge broken">Overcounting</span></td>
+              <td>Records AdRotate banner impressions — but fires for all banners at DOM load including hidden rotating ones; duplicates Tag 52</td>
+              <td>AdRotate Banner Locations (<code>ad_rotate</code>)<br>AdRotate Image (<code>ad_rotate_image</code>)</td>
               <td>AdRotate GA4 (27)</td>
               <td>JCS</td>
-              <td>Consent NOT_SET; measurementIdOverride hardcoded. Element visibility on <code>.gofollow>img</code> — counts all banners at DOM load including hidden rotating ones. Duplicate of Tag 52 mechanism. Params: <code>ad_rotate</code>, <code>ad_rotate_image</code></td>
+              <td>Consent fixed in v1. measurementIdOverride hardcoded. Element visibility on <code>.gofollow>img</code> — counts hidden banners. Duplicate of Tag 52 mechanism. Replace both with IntersectionObserver approach.</td>
             </tr>
             <tr>
               <td>29</td>
@@ -721,9 +729,11 @@
               <td>GA4 Event</td>
               <td><code>supplier_logo_impression</code></td>
               <td><span class="badge legacy">Consent ✗</span></td>
+              <td>Records when a supplier logo becomes visible on screen</td>
+              <td>Company View (<code>client_logo_view</code>)</td>
               <td>Logo Viewed GA4 (8)</td>
               <td>JCS</td>
-              <td>Consent NOT_SET; measurementIdOverride hardcoded. Param: <code>client_logo_view</code></td>
+              <td>Consent fixed in v1. measurementIdOverride hardcoded.</td>
             </tr>
             <tr>
               <td>32</td>
@@ -731,9 +741,11 @@
               <td>GA4 Event</td>
               <td><code>logo_url</code></td>
               <td><span class="badge legacy">Consent ✗</span></td>
+              <td>Records the client logo image displayed in an article's featured section</td>
+              <td>Logo URLs (<code>logo_url</code>)</td>
               <td>Client Logos - images (24)</td>
               <td>JCS</td>
-              <td>Consent NOT_SET; measurementIdOverride hardcoded. Param: <code>logo_url</code>. Event name is ambiguous.</td>
+              <td>Consent fixed in v1. measurementIdOverride hardcoded. Event name is ambiguous.</td>
             </tr>
             <tr>
               <td>35</td>
@@ -741,9 +753,11 @@
               <td>GA4 Event</td>
               <td><code>hp_featured_suppliers</code></td>
               <td><span class="badge legacy">Consent ✗</span></td>
-              <td>Firing: HP Featured Suppliers (34) · Blocking: Homepage Only Trigger (41)</td>
+              <td>Tracks when a featured supplier banner on the homepage becomes visible</td>
+              <td>Homepage Featured Supplier (<code>hp_featured_supplier_image</code>)</td>
+              <td>Firing: HP Featured Suppliers (34) · Blocking: Homepage Only (41)</td>
               <td>JCS</td>
-              <td>Consent NOT_SET; measurementIdOverride hardcoded. Homepage only (correct — blocking trigger logic). Param: <code>hp_featured_supplier_image</code></td>
+              <td>Consent fixed in v1. measurementIdOverride hardcoded. Homepage only via blocking trigger logic ✓.</td>
             </tr>
             <tr>
               <td>50</td>
@@ -751,9 +765,11 @@
               <td>Custom HTML</td>
               <td>—</td>
               <td><span class="badge warning">console.log</span></td>
+              <td>Collects AdRotate banner images from the DOM and pushes impression data to the dataLayer for Tag 52</td>
+              <td>—</td>
               <td>DOM Ready (49)</td>
               <td>JCS</td>
-              <td>Loops through <code>.gofollow > img</code>, pushes <code>imgSrcEvent</code> to dataLayer per banner. Contains <code>console.log()</code> in production. Fires on all pages at DOM Ready.</td>
+              <td>Contains <code>console.log()</code> in production. Fires on all pages at DOM Ready.</td>
             </tr>
             <tr>
               <td>52</td>
@@ -761,9 +777,11 @@
               <td>GA4 Event</td>
               <td><code>imgSrcEvent</code></td>
               <td><span class="badge broken">Duplicate + camelCase</span></td>
-              <td>AdRotate dynamic custom event trigger (51)</td>
+              <td>Records which AdRotate banner was displayed to a visitor (via dataLayer push from Tag 50)</td>
+              <td>AdRotate Image (<code>ad_rotate_image</code>)<br>AdRotate Width (<code>ad_rotate_width</code>)</td>
+              <td>AdRotate dynamic event (51)</td>
               <td>JCS</td>
-              <td>Consent NOT_SET; measurementIdOverride hardcoded. camelCase event name — inconsistent. Fired by Tag 50 — duplicates adrotate_locations data. Params: <code>ad_rotate_image</code>, <code>ad_rotate_width</code></td>
+              <td>Consent fixed in v1. measurementIdOverride hardcoded. camelCase event name — inconsistent. Duplicates adrotate_locations data.</td>
             </tr>
           </tbody>
         </table>
