@@ -379,15 +379,19 @@
           </div>
         </div>
 
-        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Planned — Consent Re-trigger Fix</div>
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v1 — Ready to Import</div>
 
         <div class="issue-item low" style="border-left-color:#9789B4;background:#f6f4fb;">
-          <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">v+</div>
+          <div class="issue-num" style="background:#9789B4;color:white;font-size:9px;min-width:28px">v1</div>
           <div class="issue-text">
-            <strong>Apply consent re-trigger fix — same pattern as Railway-News v205</strong>
-            First-session page views are lost when a new visitor accepts consent on their first visit. Railway-News v205 fixes this by adding a <code>{{DLV - analytics}}</code> Data Layer Variable + <code>Consent Granted - Analytics</code> trigger (Custom Event <code>a2b_consent_updated</code> with condition <code>analytics = granted</code>) applied to the GA4 config tag and all page-level / impression tags.
+            <strong>Combined consent fix — GTM-T36FGV7_v1_consent_apollo_fix.json</strong>
+            Import this file to GTM-T36FGV7 (overwrite mode). Contains three changes in one push:
             <br><br>
-            Apply this same pattern to Bus-News once Railway-News v205 has been confirmed working in GTM Preview. Do <strong>not</strong> add this trigger to form submission, link click, or download click tags — those should only fire on actual user actions, not on consent acceptance.
+            1. <strong>analytics_storage consent</strong> added to all 13 GA4 event tags (Tags 9, 12, 27, 33, 36, 42, 46, 56, 61, 65, 68, 72, 75). Prevents consent bypass.
+            <br>
+            2. <strong>ad_storage consent</strong> added to Apollo.io Tag 49. GDPR gate on B2B visitor ID tool.
+            <br>
+            3. <strong>Consent re-trigger</strong>: Variable 74 (<code>{{DLV - analytics}}</code>) + Trigger 75 (<code>Consent Granted - Analytics</code>, Custom Event <code>a2b_consent_updated</code> with condition <code>analytics = granted</code>) applied to 11 tags: Tag 69 (config), 9, 12, 27, 33, 36, 54, 56, 65, 68, 72. First-session page views captured after consent acceptance. Not applied to click, form, or download tags.
           </div>
         </div>
 

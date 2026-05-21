@@ -389,15 +389,17 @@
           </div>
         </div>
 
-        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Planned — Consent Re-trigger Fix</div>
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v1 — Ready to Import</div>
 
         <div class="issue-item low" style="border-left-color:#8CC63E;background:#f5faf0;">
-          <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">v+</div>
+          <div class="issue-num" style="background:#8CC63E;color:white;font-size:9px;min-width:28px">v1</div>
           <div class="issue-text">
-            <strong>Apply consent re-trigger fix — same pattern as Railway-News v205</strong>
-            First-session page views are lost when a new visitor accepts consent on their first visit. Railway-News v205 fixes this by adding a <code>{{DLV - analytics}}</code> Data Layer Variable + <code>Consent Granted - Analytics</code> trigger (Custom Event <code>a2b_consent_updated</code> with condition <code>analytics = granted</code>) applied to the GA4 config tag and all page-level / impression tags.
+            <strong>Consent fix — GTM-W427RXM_v1_consent_fix.json</strong>
+            Import this file to GTM-W427RXM (overwrite mode). No Apollo.io found in this container. Contains two changes:
             <br><br>
-            Apply this same pattern to Future Transport-News once Railway-News v205 has been confirmed working in GTM Preview. Do <strong>not</strong> add this trigger to form submission, link click, or download click tags — those should only fire on actual user actions, not on consent acceptance.
+            1. <strong>analytics_storage consent</strong> added to all 7 GA4 event tags (Tags 12, 26, 28, 29, 32, 35, 52). Prevents consent bypass.
+            <br>
+            2. <strong>Consent re-trigger</strong>: Variable 49 (<code>{{DLV - analytics}}</code>) + Trigger 52 (<code>Consent Granted - Analytics</code>, Custom Event <code>a2b_consent_updated</code> with condition <code>analytics = granted</code>) applied to 9 tags: Tag 54 (config), 12, 26, 28, 29, 32, 35, 50, 52. First-session page views captured after consent acceptance.
           </div>
         </div>
 
