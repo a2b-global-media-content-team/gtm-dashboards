@@ -303,7 +303,7 @@
   <div class="section">
     <div class="section-header open" onclick="toggle(this)">
       <h2>Next Steps</h2>
-      <span class="count">Initial audit complete · no changes made yet · workspace48 as exported</span>
+      <span class="count">v1 ready to publish · consent fix imported · Apollo tag added manually</span>
       <span class="chevron">▼</span>
     </div>
     <div class="section-body">
@@ -389,17 +389,18 @@
           </div>
         </div>
 
-        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v1 — Ready to Import</div>
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v1 — Ready to Publish</div>
 
         <div class="issue-item low" style="border-left-color:#8CC63E;background:#f5faf0;">
           <div class="issue-num" style="background:#8CC63E;color:white;font-size:9px;min-width:28px">v1</div>
           <div class="issue-text">
-            <strong>Consent fix — GTM-W427RXM_v1_consent_fix.json</strong>
-            Import this file to GTM-W427RXM (overwrite mode). No Apollo.io found in this container. Contains two changes:
+            <strong>Consent fix imported + Apollo.io tag added — ready to submit and publish</strong>
             <br><br>
-            1. <strong>analytics_storage consent</strong> added to all 7 GA4 event tags (Tags 12, 26, 28, 29, 32, 35, 52). Prevents consent bypass.
-            <br>
-            2. <strong>Consent re-trigger</strong>: Variable 49 (<code>{{DLV - analytics}}</code>) + Trigger 52 (<code>Consent Granted - Analytics</code>, Custom Event <code>a2b_consent_updated</code> with condition <code>analytics = granted</code>) applied to 9 tags: Tag 54 (config), 12, 26, 28, 29, 32, 35, 50, 52. First-session page views captured after consent acceptance.
+            <strong>1. Consent fix</strong> — <code>GTM-W427RXM_v1_consent_fix.json</code> imported (overwrite). Contains:
+            <br>— <code>analytics_storage</code> consent added to all 7 GA4 event tags (Tags 12, 26, 28, 29, 32, 35, 52).
+            <br>— Consent re-trigger: Variable 49 (<code>{{DLV - analytics}}</code>) + Trigger 52 (<code>Consent Granted - Analytics</code>) applied to 9 tags: Tag 54 (config), 12, 26, 28, 29, 32, 35, 50, 52.
+            <br><br>
+            <strong>2. Apollo.io Tag</strong> — added manually in GTM UI. Custom HTML, fires on All Pages, <code>ad_storage</code> consent gate. App ID: <code>66336ab7c350390572a05d4b</code>.
           </div>
         </div>
 
@@ -446,7 +447,7 @@
         </div>
         <div class="config-item">
           <div class="key">Third-party Tags</div>
-          <div class="val ok">None — no Apollo.io or B2B tracking tools found ✓</div>
+          <div class="val warn">Apollo.io Tag added manually in v1 workspace — <code>ad_storage</code> consent gate applied ✓. Publish pending.</div>
         </div>
         <div class="config-item">
           <div class="key">Account ID</div>
