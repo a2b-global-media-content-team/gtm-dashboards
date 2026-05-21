@@ -302,13 +302,27 @@
   <div class="section">
     <div class="section-header open" onclick="toggle(this)">
       <h2>Next Steps</h2>
-      <span class="count">v206 live · folder rename pending · dev tasks outstanding</span>
+      <span class="count">v207 live · testing in progress · folder rename pending</span>
       <span class="chevron">▼</span>
     </div>
     <div class="section-body">
       <div class="issue-list">
 
-        <div style="padding: 4px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v206 — Live ✓</div>
+        <div style="padding: 4px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v207 — Live · Testing in Progress</div>
+
+        <div class="issue-item low" style="border-left-color:#1b3342;background:#f0f4f7;">
+          <div class="issue-num" style="background:#1b3342;color:white;font-size:9px;min-width:28px">v207</div>
+          <div class="issue-text">
+            <strong>Client engagement tracking — published 21 May 2026</strong>
+            12 new <code>client_engagement</code> GA4 event tags + 12 triggers + 2 variables (<code>{{Social Platform}}</code>, <code>{{Click - In Article Body}}</code>). Tag 256 (form_submission) updated to include <code>client</code> param.
+            <br><br>
+            <strong>Engagement types tracked:</strong> <code>website_click</code> · <code>phone_click</code> · <code>favourite</code> · <code>social_click</code> (+ <code>social_platform</code> param) · <code>share_linkedin</code> · <code>share_copy</code> · <code>news_click</code> · <code>video_click</code> · <code>in_body_link_click</code> · <code>image_view</code> · <code>download</code> · <code>form_submission</code>
+            <br><br>
+            All restricted to <code>/suppliers/</code> pages. All require <code>analytics_storage</code> consent. Form submission fires on CF7 form ID 11633 (supplier contact) only.
+          </div>
+        </div>
+
+        <div style="padding: 8px 0 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">v206 — Live ✓</div>
 
         <div class="issue-item low" style="opacity:0.6">
           <div class="issue-num" style="background:#27ae60;color:white;font-size:10px;min-width:28px">✓</div>
